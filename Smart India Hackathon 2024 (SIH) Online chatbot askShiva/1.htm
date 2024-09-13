@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/070428bd88.js" crossorigin="anonymous"></script>
+    <title>Chatbot | Code Mo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+        :root {
+            --primary-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --msg-bg: #fff;
+            --left-msg-bg: #4b79a1;
+            --right-msg-bg: #f1f1f1;
+            --input-bg: #ededed;
+            --header-bg: #3f5efb;
+            --header-text: #fff;
+            --send-btn-color: #3f5efb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: var(--primary-bg);
+        }
+
+        .msger {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 400px;
+            height: 600px;
+            background-color: var(--msg-bg);
+            box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+            border-radius: 15px;
+            overflow: hidden;
+        }
+
+        .msger-header {
+            padding: 15px;
+            background: var(--header-bg);
+            color: var(--header-text);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .msger-header-title {
+            font-weight: bold;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .msger-header-title img {
+            height: 2.5rem;
+            margin-right: 10px;
+        }
+
+        .msger-chat {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+            scrollbar-width: thin;
+        }
+
+        .msg {
+            display: flex;
+            align-items: flex-end;
+            margin-bottom: 20px;
+        }
+
+        .msg-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .msg-bubble {
+            max-width: 75%;
+            padding: 15px;
+            border-radius: 15px;
+            position: relative;
+            font-size: 1rem;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .left-msg .msg-bubble {
+            background: var(--left-msg-bg);
+            color: #fff;
+            border-bottom-left-radius: 0;
+        }
+
+        .right-msg {
+            flex-direction: row-reverse;
+        }
+
+        .right-msg .msg-bubble {
+            background: var(--right-msg-bg);
+            color: #333;
+            border-bottom-right-radius: 0;
+        }
+
+        .right-msg .msg-img {
+            margin-left: 10px;
+        }
+
+        .msger-inputarea {
+            display: flex;
+            padding: 10px;
+            background: var(--input-bg);
+        }
+
+        .msger-input {
+            flex: 1;
+            padding: 10px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 10px;
+            outline: none;
+            background-color: #fff;
+            box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .msger-send-btn {
+            padding: 10px 15px;
+            margin-left: 10px;
+            border: none;
+            background-color: var(--send-btn-color);
+            color: white;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .msger-send-btn:hover {
+            background-color: #2a44c9;
+        }
+    </style>
+</head>
+
+<body>
+    <section class="msger">
+        <header class="msger-header">
+            <div class="msger-header-title">
+                <img src="images/bot.jpg" alt="">
+                <p>askShiva</p>
+            </div>
+        </header>
+        <main class="msger-chat">
+            <!-- Bot message -->
+            <div class="msg left-msg">
+                <div class="msg-img" style="background-image: url('images/bot.jpg');"></div>
+                <div class="msg-bubble">
+                    <div class="msg-text">
+                        Hi, welcome to the askShiva! How can I assist you today?
+                    </div>
+                </div>
+            </div>
+            <!-- User message -->
+            <div class="msg right-msg">
+                
+        </main>
+
+        <form class="msger-inputarea">
+            <input type="text" class="msger-input" placeholder="Enter your message...">
+            <button type="submit" class="msger-send-btn"><i class="fa fa-paper-plane"></i></button>
+        </form>
+    </section>
+
+    
+        <script>
+        const msgerForm = get(".msger-inputarea");
+        const msgerInput = get(".msger-input");
+        const msgerChat = get(".msger-chat");
+        const BOT_IMG = "images/bot.jpg";
+        const PERSON_IMG = "images/person.jpg";
+        const BOT_NAME = "askShiva";
+        const PERSON_NAME = "Huma";
+
+        const prompts = [
+            ["hello", "hey", "hii", "good day", "greetings", "what's up?", "how is it going?"],
+            ["who are you","what is your name", "name", "what's your name",  "what can i call you"],
+            ["what are the opening hours?","when is the museum open?","what time does the museum close?","museum hours","is the museum open today?"],
+            ["how much is a ticket?","ticket prices","how much does entry cost?","can I buy tickets online?"],
+            ["what exhibits are available?","current exhibitions","tell me about your exhibits","what can I see at the museum?"],
+            ["where is the museum?","how do I get to the museum?","museum address","what's the location of the museum?"],
+            ["do you offer guided tours?","can I book a tour?","guided tour timings","are there any tour guides available?"]
+        
+        ];
+
+        const replies = [
+            ["Hello!", "Hey!", "What can I do for you?"],
+            ["You can call me askShiva", "I'm askShiva", "I'm askShiva, your virtual assistant"],
+            ["The museum is open from 9 AM to 5 PM, Monday through Saturday. On Sundays, we're open from 10 AM to 6 PM.","We're open daily from 9 AM to 5 PM. Do you need help planning your visit?",,"Our museum is open from 9 AM to 5 PM. Feel free to stop by!"],
+            ["General admission is $15 for adults, $10 for students, and free for children under 12. You can buy tickets online or at the entrance.","Tickets are priced at $15 for adults and $10 for students. We also offer discounted group rates."]
+            ["Currently, we have the 'Ancient Civilizations' exhibit, a special 'Renaissance Art' section, and a rotating display on 'Modern Sculpture'.","Our key exhibits include 'Dinosaurs of the Mesozoic', 'Ancient Egypt', and 'Impressionist Paintings'. Which one interests you?","You can explore exhibits on history, art, and science! Right now, we have special displays on 'Fossils', 'Space Exploration', and 'Historical Artifacts'."],
+            ["The museum is located at 123 Museum Ave, downtown. You can reach us by bus, train, or car. Would you like detailed directions?","We're located at 123 Museum Street, just a 5-minute walk from the Central Station.","The museum is situated in the heart of downtown at 123 Museum Lane. Let me know if you need more detailed directions."],
+            ["Yes, we offer guided tours at 11 AM, 1 PM, and 3 PM daily. Would you like to book a spot?","Our guided tours are available throughout the day. You can join one at 11 AM or 3 PM.","Guided tours are offered every day. You can book online or ask at the entrance."]
+        ];
+
+        const alternative = [
+             ["i can't understand",  "try again", "please retry", "I don't understand :/"]
+        ];
+
+        const robot = ["how do you do, fellow human", "I am not a bot"];
+
+        msgerForm.addEventListener("submit", event => {
+            event.preventDefault();
+            const msgText = msgerInput.value;
+            if (!msgText) return;
+            msgerInput.value = "";
+            addChat(PERSON_NAME, PERSON_IMG, "right", msgText);
+            output(msgText);
+        });
+
+        function output(input) {
+            let product;
+            let text = input.toLowerCase()
+                .replace(/[^\w\s]/g, "")
+                .trim()
+                .replace(/ a /g, "")
+                .replace(/i feel/g, "")
+                .replace(/what's/g, "what is")
+                .replace(/please /g, "")
+                .replace(/r u/g, "are you");
+
+            if (compare(prompts, replies, text)) {
+                product = compare(prompts, replies, text);
+            } else if (text.match(/thank/gi)) {
+                product = "You're welcome";
+                console.log("Processed input: ", text);  // Add this to check what's happening to the input
+
+            } else if (text.match(/(robot|bot.jpg|robo)/gi)) {
+                product = robot[Math.floor(Math.random() * robot.length)];
+            } else {
+                product = alternative[Math.floor(Math.random() * alternative.length)];
+            }
+
+            const delay = input.split("").length * 100;
+            setTimeout(() => {
+                addChat(BOT_NAME, BOT_IMG, "left", product);
+            }, delay);
+        }
+
+        function compare(promptsArray, repliesArray, string) {
+            let reply;
+            let replyfound = false;
+            for (let x = 0; x < promptsArray.length; x++) {
+                for (let y = 0; y < promptsArray[x].length; y++) {
+                    if (string.includes(promptsArray[x][y])) {
+                        let replies = repliesArray[x];
+                        reply = replies[Math.floor(Math.random() * replies.length)];
+                        replyfound = true;
+                        break;
+                    }
+                }
+                if (replyfound) { break; }
+            }
+            return reply;
+        }
+
+        function addChat(name, img, side, text) {
+            const msgHTML = `
+                <div class="msg ${side}-msg">
+                    <div class="msg-img" style="background-image: url(${img})"></div>
+                    <div class="msg-bubble">
+                        <div class="msg-info">
+                            <div class="msg-info-name">${name}</div>
+                            <div class="msg-info-time">${formdate(new Date())}</div>
+                        </div>
+                        <div class="msg-text">${text}</div>
+                    </div>
+                </div>`;
+
+            msgerChat.insertAdjacentHTML("beforeend", msgHTML);
+            msgerChat.scrollTop += 500;
+        }
+
+        function get(selector, root = document) {
+            return root.querySelector(selector);
+        }
+
+        function formdate(date) {
+            const h = "0" + date.getHours();
+            const m = "0" + date.getMinutes();
+            return `${h.slice(-2)}:${m.slice(-2)}`;
+        }
+    </script>
+        
+   
+</body>
+
+</html>
